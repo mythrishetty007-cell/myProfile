@@ -29,7 +29,7 @@ const projectsData = [
       "Responsive personal portfolio website showcasing projects, skills, and contact information.",
     technologies: ["HTML", "Tailwind CSS", "JavaScript"],
     status: "Live",
-    liveDemo: "http://127.0.0.1:5500/MERN_Stu_FebMay26Mys/Assignment/Portfolio-Project/index.html",
+    liveDemo: "#",
     github: "https://github.com/mythrishetty007-cell/MERN_Stu_FebMay26Mys/tree/main/Assignment/Portfolio-Project"
   },
   {
