@@ -1,6 +1,9 @@
-function projectsearch(){
-    let project = projectsData;
-    let projects = project.map(item=>projectfilter);
-    console.log("projects");
-    return projects;
+function initProjectSearch() {
+    const searchInput = document.getElementById("project-search");
+    if (!searchInput) return;
+
+    searchInput.addEventListener("input", (e) => {
+        currentSearchTerm = e.target.value.toLowerCase();
+        applyAllFilters();
+    });
 }

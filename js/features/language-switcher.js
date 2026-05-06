@@ -1,3 +1,13 @@
+// ── Safe localStorage helpers ────────────────────────────────────────────────
+function storageGet(key) {
+  try { return localStorage.getItem(key); }
+  catch (e) { return null; }
+}
+function storageSet(key, value) {
+  try { localStorage.setItem(key, value); }
+  catch (e) { /* storage blocked by Tracking Prevention — silently ignore */ }
+}
+
 function initLanguageSelector() {
   const translations = {
     en: {
@@ -39,11 +49,11 @@ function initLanguageSelector() {
         el.textContent = translations[lang][key];
       }
     });
-    localStorage.setItem('preferredLanguage', lang);
+    storageSet('preferredLanguage', lang);
   }
 
   if (languageSelector) {
-    const savedLang = localStorage.getItem('preferredLanguage') || 'en';
+    const savedLang = storageGet('preferredLanguage') || 'en';
     languageSelector.value = savedLang;
     setLanguage(savedLang);
     console.log("Language initialized to: " + savedLang);

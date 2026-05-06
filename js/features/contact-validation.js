@@ -1,61 +1,70 @@
-function initContactValidation(){
-    const contactModal = document.getElementById("contact-modal");
-    const contactForm = document.getElementById("contact-form");
-    const contactName = document.getElementById("contact-name");
-    const contactEmail = document.getElementById("contact-email");
-    const formMessage = document.getElementById("form-message");
+function initContactValidation() {
+    const contactForm    = document.getElementById("contact-form");
+    const contactName    = document.getElementById("contact-name");
+    const contactEmail   = document.getElementById("contact-email");
+    const contactMessage = document.getElementById("contact-message");
+    const formMessage    = document.getElementById("form-message");
+    const submitBtn      = contactForm ? contactForm.querySelector("button[type='submit']") : null;
 
-    if(!contactModal || !contactForm|| !contactName|| !contactEmail||!formMessage){
+    if (!contactForm || !contactName || !contactEmail || !contactMessage || !formMessage) {
         console.log("Contact form elements not found");
         return;
     }
 
-    contactForm.addEventListener("submit",function(event){
+    // ---- helpers ----
+    function showError(msg, focusEl) {
+        formMessage.textContent = msg;
+        formMessage.className   = "text-sm text-red-500 font-semibold";
+        if (focusEl) focusEl.focus();
+    }
+
+    function showSuccess(msg) {
+        formMessage.textContent = msg;
+        formMessage.className   = "text-sm text-green-600 font-semibold";
+    }
+
+    function setLoading(isLoading) {
+        if (!submitBtn) return;
+        submitBtn.disabled    = isLoading;
+        submitBtn.textContent = isLoading ? "Sending…" : "Send Message";
+    }
+
+    // ---- form submit ----
+    contactForm.addEventListener("submit", function(event) {
         event.preventDefault();
 
-        const name = contactName.value.trim();
-        const email = contactEmail.value.trim();
-        
-        formMessage.textContent = "";
-        formMessage.classList = "text-sm";
+        const name    = contactName.value.trim();
+        const email   = contactEmail.value.trim();
+        const message = contactMessage.value.trim();
 
-        //Name validation
-        if(name === ""){
-            formMessage.textContent = "Name is required";
-            formMessage.classList.add("text-red-500");
-            contactName.focus();
-            return;
-        }
-        if(name.length < 5){
-            formMessage.textContent = "Name must be at least 5 chars";
-            formMessage.classList.add("text-red-500");
-            contactName.focus();
-            return;
-        }
-        //Email validation
-        if(email === ""){
-            formMessage.textContent = "Email is required";
-            formMessage.classList.add("text-red-500");
-            contactEmail.focus();
-            return;
-        }
+        formMessage.textContent = "";
+
+        // Validation
+        if (name === "")               return showError("Name is required.", contactName);
+        if (name.length < 3)           return showError("Name must be at least 3 characters.", contactName);
+        if (email === "")              return showError("Email is required.", contactEmail);
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) return showError("Enter a valid email address.", contactEmail);
+        if (message === "")            return showError("Message cannot be empty.", contactMessage);
 
-        if(!emailPattern.test(email)){
-            formMessage.textContent = "Enter valid email";
-            formMessage.classList.add("text-red-500");
-            contactEmail.focus();
-            return;
-        }
-        formMessage.textContent = "Message submitted successfully";
-        formMessage.classList.add("text-green-600");
-        console.log("Valid credentials:",{name:name,email:email});
-        contactForm.reset();
+        setLoading(true);
+
+        // Simulate a short delay then show success
+        setTimeout(function() {
+            showSuccess("✅ Message received! I'll get back to you soon.");
+            contactForm.reset();
+
+            // Clear any autosaved form data
+            try { localStorage.removeItem("contact-form-data"); } catch (e) {}
+
+            setLoading(false);
+        }, 800);
     });
-    contactName.addEventListener("input",function(){
-        formMessage.textContent = "";
+
+    // Clear error message as user types
+    [contactName, contactEmail, contactMessage].forEach(function(el) {
+        el.addEventListener("input", function() {
+            formMessage.textContent = "";
+        });
     });
-    contactEmail.addEventListener("input",function(){
-        formMessage.textContent = "";
-    });
-}    
+}
